@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}Stock - {{ company_name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-boxes me-2"></i>Gestión de Stock</h1>
+    <a href="{{ url_for('stock.add') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Importar Rollos
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Lote</th>
+                        <th>Total</th>
+                        <th>Disponible</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No hay rollos en stock
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

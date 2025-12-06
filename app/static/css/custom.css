@@ -1,0 +1,135 @@
+/* ===================================
+   Estilos Personalizados Adicionales
+   =================================== */
+
+/* Logo de American Tint */
+.brand-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Cards de estadísticas personalizadas */
+.stat-card {
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+/* Botones personalizados */
+.btn-at-primary {
+    background-color: #1e3a8a;
+    color: white;
+    border: none;
+}
+
+.btn-at-primary:hover {
+    background-color: #1e40af;
+    color: white;
+}
+
+/* Tabla de códigos de garantía */
+.warranty-code {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+/* Estados de stock */
+.stock-available {
+    color: #198754;
+    font-weight: 600;
+}
+
+.stock-partial {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.stock-depleted {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Categorías de productos */
+.category-premium {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.category-nanocarbon {
+    background: linear-gradient(135deg, #434343 0%, #000000 100%);
+    color: white;
+}
+
+.category-nanoceramic {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+/* Dashboard widgets */
+.widget {
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.widget-icon {
+    font-size: 3rem;
+    opacity: 0.2;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+/* Búsqueda avanzada */
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding-right: 40px;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+/* Timeline de actividades */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #0d6efd;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #0d6efd;
+}

@@ -1,0 +1,23 @@
+<!-- Sidebar -->
+<div class="bg-dark border-end" id="sidebar-wrapper" style="min-height: 100vh;">
+    <div class="sidebar-heading text-white text-center py-4 fs-4 fw-bold border-bottom">
+        <i class="fas fa-tint me-2"></i>{{ company_name }}
+    </div>
+    <div class="list-group list-group-flush">
+        <a href="{{ url_for('dashboard.index') }}" class="list-group-item list-group-item-action bg-dark text-white">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a href="{{ url_for('stock.index') }}" class="list-group-item list-group-item-action bg-dark text-white">
+            <i class="fas fa-boxes me-2"></i>Stock
+        </a>
+        <a href="{{ url_for('warranty.index') }}" class="list-group-item list-group-item-action bg-dark text-white">
+            <i class="fas fa-shield-alt me-2"></i>Garantías
+        </a>
+        <a href="{{ url_for('product.index') }}" class="list-group-item list-group-item-action bg-dark text-white">
+            <i class="fas fa-tag me-2"></i>Productos
+        </a>
+        <a href="{{ url_for('report.index') }}" class="list-group-item list-group-item-action bg-dark text-white">
+            <i class="fas fa-chart-bar me-2"></i>Reportes
+        </a>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <div class="container-fluid">
+        <button class="btn btn-outline-secondary" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>{{ current_user.full_name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Perfil</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
