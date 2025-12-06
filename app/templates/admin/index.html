@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - American Tint{% endblock %}
+{% block page_title %}Panel de Administración{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+          <i class="material-icons opacity-10">inventory_2</i>
+        </div>
+        <div class="text-end pt-1">
+          <p class="text-sm mb-0 text-capitalize">Stock Total</p>
+          <h4 class="mb-0">{{ rollos|length }} Rollos</h4>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0"><span class="text-success text-sm font-weight-bolder">Actualizado </span>ahora mismo</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="card">
+      <div class="card-header p-3 pt-2">
+        <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+          <i class="material-icons opacity-10">store</i>
+        </div>
+        <div class="text-end pt-1">
+          <p class="text-sm mb-0 text-capitalize">Talleres</p>
+          <h4 class="mb-0">{{ instaladores|length }}</h4>
+        </div>
+      </div>
+      <hr class="dark horizontal my-0">
+      <div class="card-footer p-3">
+        <p class="mb-0">Clientes registrados</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-lg-4 col-md-6 mb-4">
+    <div class="card z-index-2 ">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+        <div class="bg-gradient-info shadow-info border-radius-lg py-3 pe-1">
+          <h6 class="text-white text-center mb-0">➕ Nuevo Taller</h6>
+        </div>
+      </div>
+      <div class="card-body">
+        <form action="{{ url_for('admin.create_installer') }}" method="POST">
+            <div class="input-group input-group-outline mb-3">
+              <label class="form-label">Nombre Taller</label>
+              <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="input-group input-group-outline mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="input-group input-group-outline mb-3">
+              <label class="form-label">Contraseña</label>
+              <input type="password" name="password" class="form-control" required>
+            </div>
+            
+            {% if current_user.role == 'superadmin' %}
+            <div class="input-group input-group-outline mb-3">
+                <select name="pais" class="form-control" required>
+                    <option value="" disabled selected>Seleccionar País...</option>
+                    <option value="AR">Argentina</option>
+                    <option value="UY">Uruguay</option>
+                    <option value="CL">Chile</option>
+                </select>
+            </div>
+            {% endif %}
+            
+            <div class="text-center">
+              <button type="submit" class="btn bg-gradient-info w-100 my-2 mb-2">Dar de Alta</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8 col-md-6 mb-4">
+    <div class="card z-index-2">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+        <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1">
+          <h6 class="text-white text-center mb-0">📦 Importar Stock al Depósito</h6>
+        </div>
+      </div>
+      <div class="card-body">
+        <form method="POST" class="row align-items-end">
+            <input type="hidden" name="importar_stock" value="1">
+            
+            <div class="col-md-6 mb-3">
+                <div class="input-group input-group-static">
+                    <label>Producto</label>
+                    <select name="producto_id" class="form-control" required>
+                        {% for p in productos %}
+                            <option value="{{ p.id }}">{{ p.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="input-group input-group-outline">
+                    <label class="form-label">Cantidad</label>
+                    <input type="number" name="cantidad" class="form-control" value="1" min="1">
+                </div>
+            </div>
+
+            {% if current_user.role == 'superadmin' %}
+            <div class="col-md-3 mb-3">
+                <div class="input-group input-group-static">
+                    <label>País Destino</label>
+                    <select name="pais_destino" class="form-control">
+                        <option value="AR">Argentina</option>
+                        <option value="UY">Uruguay</option>
+                        <option value="CL">Chile</option>
+                    </select>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-12 text-end">
+                <button type="submit" class="btn bg-gradient-success mb-0">Generar Stock</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+          <h6 class="text-white text-capitalize ps-3">📜 Stock en Depósito Central</h6>
+        </div>
+      </div>
+      <div class="card-body px-0 pb-2">
+        <div class="table-responsive p-0">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código Rollo</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estado</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ubicación</th>
+                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rollo in rollos %}
+              <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm">{{ rollo.codigo_padre }}</h6>
+                      <p class="text-xs text-secondary mb-0">ID: {{ rollo.id }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                    {% if rollo.estado == 'EN_DEPOSITO' %}
+                        <span class="badge badge-sm bg-gradient-success">En Depósito</span>
+                    {% elif rollo.estado == 'ASIGNADO' %}
+                        <span class="badge badge-sm bg-gradient-info">En Taller</span>
+                    {% else %}
+                        <span class="badge badge-sm bg-gradient-secondary">{{ rollo.estado }}</span>
+                    {% endif %}
+                </td>
+                <td class="align-middle text-center text-sm">
+                    {% if rollo.propietario.id == current_user.id %}
+                        <span class="text-secondary text-xs font-weight-bold">Mí Stock</span>
+                    {% else %}
+                        <span class="text-xs font-weight-bold">{{ rollo.propietario.username }}</span>
+                    {% endif %}
+                </td>
+                <td class="align-middle text-center">
+                  <span class="text-secondary text-xs font-weight-bold">{{ rollo.fecha_creacion.strftime('%d/%m/%Y') }}</span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

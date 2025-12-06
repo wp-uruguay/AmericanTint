@@ -1,8 +1,8 @@
-"""Base de datos completa
+"""Con Reseñas
 
-Revision ID: eda7133eb24d
+Revision ID: 2b70eabe8d58
 Revises: 
-Create Date: 2025-12-05 23:09:36.439951
+Create Date: 2025-12-06 14:06:35.909697
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'eda7133eb24d'
+revision = '2b70eabe8d58'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -69,9 +69,13 @@ def upgrade():
     sa.Column('rollo_id', sa.Integer(), nullable=False),
     sa.Column('cliente_nombre', sa.String(length=100), nullable=True),
     sa.Column('cliente_email', sa.String(length=100), nullable=True),
+    sa.Column('cliente_telefono', sa.String(length=50), nullable=True),
     sa.Column('cliente_patente', sa.String(length=20), nullable=True),
     sa.Column('fecha_activacion', sa.DateTime(), nullable=True),
     sa.Column('fecha_vencimiento', sa.DateTime(), nullable=True),
+    sa.Column('instalador_correcto', sa.Boolean(), nullable=True),
+    sa.Column('review_texto', sa.Text(), nullable=True),
+    sa.Column('review_stars', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['rollo_id'], ['rollos.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('codigo_hijo')

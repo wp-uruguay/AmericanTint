@@ -2,6 +2,7 @@ from flask import Blueprint, render_template_string, request, flash, redirect, u
 from flask_login import login_required, current_user
 from app.extensions import db
 from app.models import Rollo, Subcodigo, AuditLog
+from app.services.email_service import EmailService
 from datetime import datetime
 
 installer_bp = Blueprint('installer', __name__)
@@ -16,14 +17,13 @@ def index():
     # Obtener mis rollos (Solo los que ya me asignaron)
     mis_rollos = Rollo.query.filter_by(user_id=current_user.id, estado='ASIGNADO').all()
 
-    # Pre-calcular datos para la vista (cuántos cupos quedan)
+    # Pre-calcular datos para la vista
     rollos_data = []
     for rollo in mis_rollos:
-        total = len(rollo.subcodigos) # Deberían ser 15
+        total = len(rollo.subcodigos)
         usados = len([s for s in rollo.subcodigos if s.estado != 'INACTIVO'])
         disponibles = total - usados
         
-        # Si se acabaron los cupos, marcamos el rollo como AGOTADO
         if disponibles == 0 and rollo.estado != 'AGOTADO':
             rollo.estado = 'AGOTADO'
             db.session.commit()
@@ -79,8 +79,7 @@ def index():
                     <div class="card-body">
                         <h5 class="card-title">Rollo American Tint</h5>
                         <p class="card-text text-muted small">
-                            ID Interno: {{ item.obj.id }} <br>
-                            Recibido: {{ item.obj.fecha_asignacion.strftime('%d/%m/%Y') if item.obj.fecha_asignacion else 'Reciente' }}
+                            ID: {{ item.obj.id }} | Recibido: {{ item.obj.fecha_asignacion.strftime('%d/%m/%Y') if item.obj.fecha_asignacion else 'Reciente' }}
                         </p>
                         
                         <div class="progress mb-3" style="height: 20px;">
@@ -91,7 +90,7 @@ def index():
 
                         {% if item.disponibles > 0 %}
                             <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalGarantia{{ item.obj.id }}">
-                                <i class="fa fa-certificate"></i> Generar Nueva Garantía
+                                <i class="fa fa-paper-plane"></i> Iniciar Garantía (Email)
                             </button>
                         {% else %}
                             <button class="btn btn-secondary w-100" disabled>Rollo Agotado</button>
@@ -104,29 +103,26 @@ def index():
                         <div class="modal-content">
                             <form action="{{ url_for('installer.create_warranty') }}" method="POST">
                                 <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title">Registrar Instalación</h5>
+                                    <h5 class="modal-title">Nueva Garantía</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="rollo_id" value="{{ item.obj.id }}">
-                                    <p>Estás usando un cupo del rollo: <strong>{{ item.obj.codigo_padre }}</strong></p>
+                                    <p class="small text-muted">Se enviará un correo al cliente para que complete sus datos personales.</p>
                                     
                                     <div class="mb-3">
-                                        <label class="form-label">Patente del Vehículo</label>
-                                        <input type="text" name="patente" class="form-control" required placeholder="Ej: AA123BB" style="text-transform: uppercase;">
+                                        <label class="form-label fw-bold">Patente del Vehículo *</label>
+                                        <input type="text" name="patente" class="form-control text-uppercase" required placeholder="Ej: AA123BB">
                                     </div>
+                                    
                                     <div class="mb-3">
-                                        <label class="form-label">Email del Cliente</label>
+                                        <label class="form-label fw-bold">Email del Cliente *</label>
                                         <input type="email" name="email" class="form-control" required placeholder="cliente@email.com">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Nombre del Cliente</label>
-                                        <input type="text" name="nombre" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" class="btn btn-success">Generar y Enviar</button>
+                                    <button type="submit" class="btn btn-success">Enviar Invitación 📧</button>
                                 </div>
                             </form>
                         </div>
@@ -143,17 +139,6 @@ def index():
             </div>
             {% endfor %}
         </div>
-
-        <h4 class="mt-4">📋 Historial Reciente</h4>
-        <div class="table-responsive">
-            <table class="table table-striped table-sm">
-                <thead><tr><th>Código Garantía</th><th>Patente</th><th>Cliente</th><th>Estado</th></tr></thead>
-                <tbody>
-                    <tr><td colspan="4" class="text-center text-muted">Aún no hay instalaciones registradas.</td></tr>
-                </tbody>
-            </table>
-        </div>
-
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
@@ -165,64 +150,45 @@ def index():
 @login_required
 def create_warranty():
     if current_user.role != 'instalador':
-        flash('Acceso denegado', 'danger')
         return redirect('/')
 
     rollo_id = request.form.get('rollo_id')
-    patente = request.form.get('patente').upper()
-    email = request.form.get('email')
-    nombre_cliente = request.form.get('nombre')
-
-    # 1. Buscar el rollo y verificar que sea mío
-    rollo = Rollo.query.get_or_404(rollo_id)
-    if rollo.user_id != current_user.id:
-        flash('Error de seguridad: Ese rollo no es tuyo.', 'danger')
+    email_cliente = request.form.get('email')
+    
+    # OBLIGATORIO: Patente
+    patente_ref = request.form.get('patente', '').upper().strip()
+    
+    if not patente_ref:
+        flash('❌ Error: Debes ingresar la patente del vehículo.', 'danger')
         return redirect(url_for('installer.index'))
 
-    # 2. Buscar un subcódigo libre (INACTIVO)
-    subcodigo_libre = Subcodigo.query.filter_by(rollo_id=rollo.id, estado='INACTIVO').first()
+    # 1. Buscar rollo y validar propiedad
+    rollo = Rollo.query.get_or_404(rollo_id)
+    if rollo.user_id != current_user.id:
+        flash('Error: Ese rollo no es tuyo.', 'danger')
+        return redirect(url_for('installer.index'))
 
-    if not subcodigo_libre:
-        flash('¡Este rollo ya no tiene cupos disponibles!', 'danger')
+    # 2. Buscar subcódigo libre
+    subcodigo = Subcodigo.query.filter_by(rollo_id=rollo.id, estado='INACTIVO').first()
+    if not subcodigo:
+        flash('Sin cupos disponibles.', 'danger')
         return redirect(url_for('installer.index'))
 
     try:
-        # 3. Asignar (Consumir cupo)
-        # Aquí marcamos como ACTIVADO directamente para el MVP, 
-        # o PENDIENTE si requieres que el cliente haga clic en un email.
-        subcodigo_libre.estado = 'ACTIVADO' 
-        subcodigo_libre.cliente_patente = patente
-        subcodigo_libre.cliente_email = email
-        subcodigo_libre.cliente_nombre = nombre_cliente
-        subcodigo_libre.fecha_activacion = datetime.utcnow()
-        
-        # Calcular vencimiento (Lógica simple: hoy + años del producto)
-        # Necesitamos acceder al producto a través del rollo
-        # (Esto requeriría un join o relationship, asumimos 6 años por defecto si falla)
-        anios_garantia = 6 # Default
-        # TODO: Implementar lógica de fecha real basada en producto.garantia_anios
-        
+        # 3. Reservar cupo (Estado PENDIENTE)
+        subcodigo.estado = 'PENDIENTE'
+        subcodigo.cliente_email = email_cliente
+        subcodigo.cliente_patente = patente_ref # Guardamos la patente obligatoria
         db.session.commit()
 
-        # 4. Auditoría
-        db.session.add(AuditLog(
-            user_id=current_user.id, 
-            accion='NUEVA_GARANTIA', 
-            detalle=f"Garantía {subcodigo_libre.codigo_hijo} para patente {patente}"
-        ))
-        db.session.commit()
+        # 4. Enviar Email
+        link = url_for('public.activar_garantia', codigo=subcodigo.codigo_hijo, _external=True)
+        EmailService.enviar_activacion(email_cliente, subcodigo.codigo_hijo, link)
 
-        # 5. Feedback (Simulación de Email)
-        mensaje_exito = f"""
-        ✅ ¡Garantía Generada! <br>
-        <strong>Código:</strong> {subcodigo_libre.codigo_hijo} <br>
-        <strong>Cliente:</strong> {nombre_cliente} <br>
-        (En un sistema real, aquí se enviaría el email).
-        """
-        flash(mensaje_exito, 'success')
+        flash(f'📧 Invitación enviada a {email_cliente} para la patente {patente_ref}.', 'success')
 
     except Exception as e:
         db.session.rollback()
-        flash(f'Error al procesar: {str(e)}', 'danger')
+        flash(f'Error: {str(e)}', 'danger')
 
     return redirect(url_for('installer.index'))

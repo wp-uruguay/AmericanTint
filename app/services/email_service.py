@@ -1,80 +1,47 @@
-"""
-Email Service - Envío de correos electrónicos
-"""
-from flask import current_app, render_template
 from flask_mail import Mail, Message
+from flask import current_app
+from threading import Thread
 
+mail = Mail()
+
+def send_async_email(app, msg, link_debug):
+    with app.app_context():
+        try:
+            # Intentamos enviar el correo real
+            mail.send(msg)
+            print(f"✅ EMAIL ENVIADO EXITOSAMENTE a: {msg.recipients}")
+        except Exception as e:
+            print(f"⚠️ EL EMAIL FALLÓ (Probablemente configuración .env): {e}")
+            print(f"🔗 PERO AQUÍ TIENES EL LINK PARA PROBAR: {link_debug}")
 
 class EmailService:
-    
     @staticmethod
-    def send_warranty_activation_email(warranty, customer):
-        """
-        Enviar email de confirmación de activación de garantía
+    def enviar_activacion(destinatario, codigo, link_activacion):
+        app = current_app._get_current_object()
         
-        Args:
-            warranty: Objeto Warranty
-            customer: Objeto Customer
+        # IMPRIMIR EN TERMINAL SIEMPRE (Para que puedas probar sin Gmail)
+        print("\n" + "="*50)
+        print(f"📧 SIMULACIÓN DE CORREO PARA: {destinatario}")
+        print(f"🔗 LINK DE ACTIVACIÓN: {link_activacion}")
+        print("="*50 + "\n")
+
+        msg = Message(
+            subject="🌟 Activa tu Garantía - American Tint",
+            recipients=[destinatario]
+        )
         
-        Returns:
-            bool: True si se envió exitosamente
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd;">
+            <h2 style="color: #d9534f;">American Tint Premium Films</h2>
+            <p>Hola,</p>
+            <p>Su instalador ha iniciado el proceso de garantía. Haga clic abajo para activar:</p>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{link_activacion}" style="background-color: #0275d8; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px;">
+                    ACTIVAR GARANTÍA AHORA
+                </a>
+            </div>
+            <p>Código manual: <strong>{codigo}</strong></p>
+        </div>
         """
-        try:
-            # TODO: Implementar envío de email
-            # Configurar Flask-Mail en extensions.py si se requiere
-            subject = f'Garantía Activada - {warranty.code}'
-            
-            # En producción, usar render_template para email HTML
-            body = f"""
-            Estimado/a {customer.full_name},
-            
-            Su garantía ha sido activada exitosamente:
-            
-            Código: {warranty.code}
-            Fecha de activación: {warranty.activation_date}
-            Fecha de expiración: {warranty.expiration_date}
-            Vehículo: {warranty.vehicle_info}
-            
-            Gracias por confiar en American Tint.
-            """
-            
-            # mail = Mail(current_app)
-            # msg = Message(subject, recipients=[customer.email], body=body)
-            # mail.send(msg)
-            
-            return True
-            
-        except Exception as e:
-            print(f'Error al enviar email: {str(e)}')
-            return False
-    
-    @staticmethod
-    def send_warranty_expiration_reminder(warranty, customer):
-        """
-        Enviar recordatorio de vencimiento de garantía
         
-        Returns:
-            bool: True si se envió exitosamente
-        """
-        try:
-            subject = f'Recordatorio: Su garantía está por vencer - {warranty.code}'
-            
-            body = f"""
-            Estimado/a {customer.full_name},
-            
-            Le recordamos que su garantía está próxima a vencer:
-            
-            Código: {warranty.code}
-            Días restantes: {warranty.days_remaining()}
-            Fecha de expiración: {warranty.expiration_date}
-            
-            Para renovaciones, contáctenos.
-            
-            American Tint
-            """
-            
-            return True
-            
-        except Exception as e:
-            print(f'Error al enviar email: {str(e)}')
-            return False
+        Thread(target=send_async_email, args=(app, msg, link_activacion)).start()
