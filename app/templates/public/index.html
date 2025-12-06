@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Soporte - American Tint</title>
+  <link href="{{ url_for('static', filename='assets/css/material-dashboard.css') }}?v=3.1.0" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <style>
+      body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-8 col-12">
+        <div class="card z-index-0 fadeIn3 fadeInBottom">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
+              <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">
+                <i class="fa fa-shield-alt"></i> American Tint
+              </h4>
+              <p class="text-white text-center mt-2 mb-0">Consulta de Garantía Oficial</p>
+            </div>
+          </div>
+          <div class="card-body">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} text-white text-center mb-3" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form role="form" class="text-start" method="POST">
+              <p class="text-center text-sm text-muted mb-4">Ingresa tu patente o código único para ver el estado de tu garantía.</p>
+              
+              <div class="input-group input-group-outline my-3">
+                <label class="form-label">Patente o Código</label>
+                <input type="text" name="busqueda" class="form-control" required style="text-transform: uppercase;">
+              </div>
+              
+              <div class="text-center">
+                <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2">Consultar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

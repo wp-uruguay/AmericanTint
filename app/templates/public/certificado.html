@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Certificado - American Tint</title>
+  <link href="{{ url_for('static', filename='assets/css/material-dashboard.css') }}?v=3.1.0" rel="stylesheet" />
+  <style>
+      .cert-border { border: 4px double #d4af37; border-radius: 10px; }
+      .text-gold { color: #d4af37; }
+      .bg-dark-cert { background-color: #1a1a1a; min-height: 100vh; }
+      .watermark { position: absolute; opacity: 0.05; transform: rotate(-30deg); font-size: 5rem; width: 100%; text-align: center; top: 40%; pointer-events: none; }
+  </style>
+</head>
+
+<body class="bg-dark-cert py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        
+        <div class="card cert-border position-relative">
+            <div class="watermark fw-bold">GARANTÍA OFICIAL</div>
+            
+            <div class="card-header text-center pt-5 pb-0 bg-transparent">
+                <h2 class="text-uppercase fw-bold ls-2">Certificado de Garantía</h2>
+                <h4 class="text-gold font-weight-normal">American Tint Premium Films</h4>
+                <div class="d-flex justify-content-center mt-3">
+                    <div style="width: 100px; height: 3px; background: #d4af37;"></div>
+                </div>
+            </div>
+
+            <div class="card-body p-5">
+                <div class="row mb-5">
+                    <div class="col-md-6 text-center text-md-start mb-3">
+                        <p class="text-xs text-uppercase text-secondary mb-0">Código Único</p>
+                        <h3 class="text-dark">{{ g.codigo_hijo }}</h3>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="text-xs text-uppercase text-secondary mb-0">Estado</p>
+                        <span class="badge bg-gradient-success">VIGENTE</span>
+                    </div>
+                </div>
+
+                <div class="card bg-gray-100 mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <span class="text-xs text-secondary text-uppercase">Producto</span>
+                                <h6 class="mb-0 text-primary">{{ producto }}</h6>
+                            </div>
+                            <div class="col-6 mb-3 text-end">
+                                <span class="text-xs text-secondary text-uppercase">Fecha Activación</span>
+                                <h6 class="mb-0">{{ g.fecha_activacion.strftime('%d/%m/%Y') }}</h6>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-xs text-secondary text-uppercase">Vehículo</span>
+                                <h6 class="mb-0">{{ g.cliente_patente }}</h6>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span class="text-xs text-secondary text-uppercase">Cliente</span>
+                                <h6 class="mb-0">{{ g.cliente_nombre }}</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-sm text-secondary mb-1">Instalación Certificada por:</p>
+                    <h5 class="mb-0">{{ instalador }}</h5>
+                    <small class="text-muted">{{ email_inst }}</small>
+                </div>
+            </div>
+
+            <div class="card-footer text-center bg-transparent">
+                <button onclick="window.print()" class="btn btn-outline-dark btn-sm mb-0">
+                    <i class="fa fa-print me-2"></i> Imprimir / Descargar
+                </button>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/" class="text-white text-sm">Volver al Inicio</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Activar Garantía</title>
+  <link href="{{ url_for('static', filename='assets/css/material-dashboard.css') }}?v=3.1.0" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <style>
+    /* Estilos Estrellas */
+    .rate { float: left; height: 46px; padding: 0 10px; }
+    .rate:not(:checked) > input { position:absolute; top:-9999px; }
+    .rate:not(:checked) > label { float:right; width:1em; overflow:hidden; white-space:nowrap; cursor:pointer; font-size:30px; color:#ccc; }
+    .rate:not(:checked) > label:before { content: '★ '; }
+    .rate > input:checked ~ label { color: #ffc700; }
+    .rate:not(:checked) > label:hover, .rate:not(:checked) > label:hover ~ label { color: #deb217; }
+    .rate > input:checked + label:hover, .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover, .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label { color: #c59b08; }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-white alert-dismissible fade show" role="alert">
+                    <span class="alert-text">{{ message }}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-success shadow-success border-radius-lg py-3 pe-1 text-center">
+                    <h4 class="text-white font-weight-bolder mb-0">Activación de Garantía</h4>
+                    <p class="text-white text-sm mb-0">Completa tus datos para recibir el certificado</p>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <form method="POST">
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">1. Código de Seguridad</h6>
+                    <div class="input-group input-group-outline mb-4 is-filled">
+                        <label class="form-label">Código</label>
+                        <input type="text" name="codigo_manual" class="form-control fw-bold text-success" value="{{ codigo }}" required>
+                    </div>
+
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">2. Datos Personales</h6>
+                    
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control" required>
+                    </div>
+
+                    <div class="input-group input-group-outline mb-4 is-filled">
+                        <label class="form-label">Patente</label>
+                        <input type="text" name="patente" class="form-control text-uppercase" value="{{ patente_ref }}" required>
+                    </div>
+
+                    <hr>
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">3. Calidad del Servicio</h6>
+                    
+                    <p class="text-sm mb-2">¿La instalación fue realizada por <strong>{{ taller }}</strong>?</p>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="instalador_ok" value="si" id="si" checked>
+                        <label class="form-check-label" for="si">Sí, correcto</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="instalador_ok" value="no" id="no">
+                        <label class="form-check-label" for="no">No, fue otro</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label mb-0">Calificación</label>
+                        <div class="rate">
+                            <input type="radio" id="star5" name="rating" value="5" /><label for="star5">5</label>
+                            <input type="radio" id="star4" name="rating" value="4" /><label for="star4">4</label>
+                            <input type="radio" id="star3" name="rating" value="3" /><label for="star3">3</label>
+                            <input type="radio" id="star2" name="rating" value="2" /><label for="star2">2</label>
+                            <input type="radio" id="star1" name="rating" value="1" /><label for="star1">1</label>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+
+                    <div class="input-group input-group-outline mb-4">
+                        <label class="form-label">Comentario (Opcional)</label>
+                        <textarea name="review_texto" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg bg-gradient-success w-100">Confirmar y Activar</button>
+                </form>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="{{ url_for('static', filename='assets/js/material-dashboard.min.js') }}?v=3.1.0"></script>
+</body>
+</html>
