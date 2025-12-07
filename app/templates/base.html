@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='assets/img/apple-icon.png') }}">
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.png') }}">
-  <title>{% block title %}American Tint ERP{% endblock %}</title>
+  
+  <title>
+    {% block title %}American Tint ERP{% endblock %}
+  </title>
   
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
   <link href="{{ url_for('static', filename='assets/css/nucleo-icons.css') }}" rel="stylesheet" />
@@ -32,11 +35,35 @@
         
         {% if current_user.role in ['admin', 'superadmin'] %}
         <li class="nav-item">
-          <a class="nav-link text-white active bg-gradient-primary" href="/admin">
+          <a class="nav-link text-white {{ 'active bg-gradient-primary' if request.path == '/admin/' else '' }}" href="/admin">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">dashboard</i>
             </div>
-            <span class="nav-link-text ms-1">Panel Admin</span>
+            <span class="nav-link-text ms-1">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/vender' in request.path or '/assign_stock' in request.path else '' }}" href="{{ url_for('admin.vender') }}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">shopping_cart</i>
+            </div>
+            <span class="nav-link-text ms-1">Vender / Enviar</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/stock' in request.path else '' }}" href="{{ url_for('admin.gestionar_stock') }}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">inventory_2</i>
+            </div>
+            <span class="nav-link-text ms-1">Gestionar Stock</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/instaladores' in request.path else '' }}" href="{{ url_for('admin.gestionar_instaladores') }}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">people</i>
+            </div>
+            <span class="nav-link-text ms-1">Instaladores</span>
           </a>
         </li>
         {% endif %}
@@ -87,6 +114,7 @@
     </nav>
 
     <div class="container-fluid py-4">
+      
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}

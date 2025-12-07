@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Stock - American Tint{% endblock %}
+{% block page_title %}Gestión de Inventario{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">add_box</i>
+                </div>
+                <div class="text-end pt-1">
+                    <h5 class="mb-0">Importar Mercadería</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="input-group input-group-static mb-4">
+                        <label>Producto</label>
+                        <select name="producto_id" class="form-control" required>
+                            {% for p in productos %}
+                                <option value="{{ p.id }}">{{ p.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="input-group input-group-outline mb-4">
+                        <label class="form-label">Cantidad de Rollos</label>
+                        <input type="number" name="cantidad" class="form-control" min="1" value="1" required>
+                    </div>
+
+                    {% if current_user.role == 'superadmin' %}
+                    <div class="input-group input-group-static mb-4">
+                        <label>País Destino</label>
+                        <select name="pais_destino" class="form-control">
+                            <option value="AR">Argentina</option>
+                            <option value="UY">Uruguay</option>
+                            <option value="CL">Chile</option>
+                            <option value="PY">Paraguay</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn bg-gradient-dark w-100">Generar Stock</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header pb-0">
+                <h6>📜 Inventario Histórico</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0" style="max_height: 500px; overflow-y: auto;">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Producto</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rollo in rollos %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{ rollo.codigo_padre }}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">
+                                        {% if rollo.producto_info %}{{ rollo.producto_info.nombre }}{% else %}ID: {{ rollo.producto_id }}{% endif %}
+                                    </p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    {% if rollo.estado == 'EN_DEPOSITO' %}
+                                        <span class="badge badge-sm bg-gradient-success">Disponible</span>
+                                    {% else %}
+                                        <span class="badge badge-sm bg-gradient-secondary">{{ rollo.estado }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{ rollo.fecha_creacion.strftime('%d/%m/%Y') }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

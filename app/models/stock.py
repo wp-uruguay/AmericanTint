@@ -14,19 +14,18 @@ class Rollo(db.Model):
     
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relaciones (Foreign Keys)
-    # Quién tiene el rollo (Admin o Instalador)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id')) 
+    # --- COLUMNA NUEVA (La que faltaba) ---
+    fecha_asignacion = db.Column(db.DateTime, nullable=True)
     
-    # Qué producto es
+    # Relaciones (Foreign Keys)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id')) 
     producto_id = db.Column(db.Integer, db.ForeignKey('productos.id'), nullable=False)
 
-    # Relación con los hijos (Garantías)
-    # Nota: Usamos el string 'Subcodigo' para evitar problemas de importación si la clase no se leyó aun
-    subcodigos = db.relationship('Subcodigo', backref='rollo_padre', lazy=True)
-
-    # Agregar esto dentro de la clase Rollo (al final)
+    # Relación inversa para ver info del producto fácilmente
     producto_info = db.relationship('Producto', backref='rollos_asociados', lazy=True)
+
+    # Relación con los hijos (Garantías)
+    subcodigos = db.relationship('Subcodigo', backref='rollo_padre', lazy=True)
 
     def __repr__(self):
         return f'<Rollo {self.codigo_padre}>'

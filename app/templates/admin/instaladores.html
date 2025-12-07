@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Instaladores - American Tint{% endblock %}
+{% block page_title %}Gestión de Talleres{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">person_add</i>
+                </div>
+                <div class="text-end pt-1">
+                    <h5 class="mb-0">Alta de Taller</h5>
+                </div>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin.create_installer') }}" method="POST">
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Nombre del Taller</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Email de Acceso</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4 mb-2">Datos de Perfil (Opcional)</h6>
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Responsable</label>
+                        <input type="text" name="responsable" class="form-control">
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control">
+                    </div>
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" name="direccion" class="form-control">
+                    </div>
+                    
+                    <div class="input-group input-group-outline mb-3">
+                        <label class="form-label">URL del Logo (Opcional)</label>
+                        <input type="text" name="logo_url" class="form-control">
+                    </div>
+
+                    {% if current_user.role == 'superadmin' %}
+                    <div class="input-group input-group-static mb-3">
+                        <label>País</label>
+                        <select name="pais" class="form-control" required>
+                            <option value="AR">Argentina</option>
+                            <option value="UY">Uruguay</option>
+                            <option value="CL">Chile</option>
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn bg-gradient-info w-100">Registrar Taller</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card h-100">
+            <div class="card-header pb-0">
+                <h6>👥 Cartera de Clientes</h6>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Taller / Usuario</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Contacto</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">País</th>
+                                <th class="text-secondary opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for inst in instaladores %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        {% if inst.logo_url %}
+                                            <img src="{{ inst.logo_url }}" class="avatar avatar-sm me-3 border-radius-lg" alt="Logo">
+                                        {% else %}
+                                            <div class="avatar avatar-sm me-3 bg-gradient-primary rounded-circle text-white">
+                                                {{ inst.username[0] }}
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{ inst.username }}</h6>
+                                            <p class="text-xs text-secondary mb-0">{{ inst.nombre_responsable or 'Sin responsable' }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ inst.email }}</p>
+                                    <p class="text-xs text-secondary mb-0">{{ inst.telefono_negocio or '-' }}</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    <span class="badge badge-sm bg-gradient-light text-dark">{{ inst.pais }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <a href="{{ url_for('admin.assign_stock', user_id=inst.id) }}" class="btn btn-link text-success text-gradient px-3 mb-0">
+                                        <i class="material-icons text-sm me-2">local_shipping</i>Enviar
+                                    </a>
+                                    <a href="{{ url_for('admin.delete_user', user_id=inst.id) }}" class="btn btn-link text-danger text-gradient px-3 mb-0" onclick="return confirm('¿Eliminar taller?')">
+                                        <i class="material-icons text-sm me-2">delete</i>Borrar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center py-4">No hay instaladores registrados.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Vender - American Tint{% endblock %}
+{% block page_title %}Nueva Venta / Envío{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">shopping_cart</i>
+                </div>
+                <div class="text-end pt-1">
+                    <h5 class="mb-0">Seleccionar Destinatario</h5>
+                </div>
+            </div>
+            <div class="card-body pt-4 p-3">
+                <p class="text-sm mb-4">Elige un instalador para iniciar la transferencia de rollos.</p>
+                <ul class="list-group">
+                    {% for inst in instaladores %}
+                    <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
+                        <div class="d-flex flex-column">
+                            <h6 class="mb-3 text-sm">{{ inst.username }}</h6>
+                            <span class="mb-2 text-xs">Email: <span class="text-dark font-weight-bold ms-sm-2">{{ inst.email }}</span></span>
+                            <span class="mb-2 text-xs">País: <span class="text-dark ms-sm-2 font-weight-bold">{{ inst.pais }}</span></span>
+                        </div>
+                        <div class="ms-auto text-end">
+                            <a class="btn btn-link text-dark px-3 mb-0" href="{{ url_for('admin.assign_stock', user_id=inst.id) }}">
+                                <i class="material-icons text-sm me-2">arrow_forward</i>Seleccionar
+                            </a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <div class="alert alert-light text-center">No hay instaladores disponibles para tu país.</div>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
