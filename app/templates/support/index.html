@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Soporte - American Tint{% endblock %}
+{% block page_title %}Centro de Soporte{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center px-3">
+                    <h6 class="text-white text-capitalize ps-3 mb-0">📨 Bandeja de Tickets</h6>
+                    <a href="{{ url_for('support.create') }}" class="btn btn-white btn-sm mb-0 text-primary fw-bold">
+                        <i class="material-icons text-sm">add</i> Nuevo Ticket
+                    </a>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0 table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">ID / Asunto</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Usuario</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Última Actividad</th>
+                                <th class="text-secondary opacity-7"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tickets %}
+                            <tr style="cursor: pointer;" onclick="window.location=&quot;{{ url_for('support.detail', ticket_id=t.id) }}&quot;">
+                                <td>
+                                    <div class="d-flex px-3 py-1">
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">#{{ t.id }} - {{ t.asunto }}</h6>
+                                            <p class="text-xs text-secondary mb-0">
+                                                {% if t.prioridad == 'URGENTE' %}<span class="text-danger fw-bold">URGENTE</span>
+                                                {% else %}Normal{% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="text-xs font-weight-bold mb-0">{{ t.autor.username }}</p>
+                                    <p class="text-xs text-secondary mb-0">{{ t.autor.email }}</p>
+                                </td>
+                                <td class="align-middle text-center text-sm">
+                                    {% if t.estado == 'ABIERTO' %}
+                                        <span class="badge badge-sm bg-gradient-success">Abierto</span>
+                                    {% elif t.estado == 'RESPONDIDO' %}
+                                        <span class="badge badge-sm bg-gradient-warning">Respondido</span>
+                                    {% else %}
+                                        <span class="badge badge-sm bg-gradient-secondary">Cerrado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="text-secondary text-xs font-weight-bold">{{ t.fecha_actualizacion.strftime('%d/%m %H:%M') }}</span>
+                                </td>
+                                <td class="align-middle">
+                                    <a href="{{ url_for('support.detail', ticket_id=t.id) }}" class="text-secondary font-weight-bold text-xs">
+                                        Ver <i class="fa fa-chevron-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="5" class="text-center py-4">No hay tickets registrados.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

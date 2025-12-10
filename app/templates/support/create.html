@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Ticket{% endblock %}
+{% block page_title %}Crear Consulta{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card">
+            <div class="card-header p-3 pt-2">
+                <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                    <i class="material-icons opacity-10">headset_mic</i>
+                </div>
+                <div class="text-end pt-1">
+                    <h5 class="mb-0">Abrir Nueva Consulta</h5>
+                </div>
+            </div>
+            <div class="card-body pt-4 p-4">
+                <form method="POST">
+                    <div class="input-group input-group-outline mb-4">
+                        <label class="form-label">Asunto</label>
+                        <input type="text" name="asunto" class="form-control" required>
+                    </div>
+                    
+                    <div class="input-group input-group-outline mb-4">
+                        <select name="prioridad" class="form-control">
+                            <option value="NORMAL">Prioridad Normal</option>
+                            <option value="ALTA">Prioridad Alta</option>
+                            <option value="URGENTE">🔥 URGENTE</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group input-group-outline mb-4">
+                        <label class="form-label">Detalle del problema</label>
+                        <textarea name="mensaje" class="form-control" rows="5" required></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('support.index') }}" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn bg-gradient-info">Enviar Ticket</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

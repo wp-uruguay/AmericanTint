@@ -66,6 +66,14 @@
             <span class="nav-link-text ms-1">Instaladores</span>
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ 'active bg-gradient-warning' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">headset_mic</i>
+            </div>
+            <span class="nav-link-text ms-1">Centro de Soporte</span>
+          </a>
+        </li>
         {% endif %}
 
         {% if current_user.role == 'instalador' %}
@@ -75,6 +83,14 @@
               <i class="material-icons opacity-10">build</i>
             </div>
             <span class="nav-link-text ms-1">Mi Taller</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white {{ 'active bg-gradient-warning' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
+            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="material-icons opacity-10">headset_mic</i>
+            </div>
+            <span class="nav-link-text ms-1">Centro de Soporte</span>
           </a>
         </li>
         {% endif %}

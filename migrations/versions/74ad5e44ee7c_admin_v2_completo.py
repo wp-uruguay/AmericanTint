@@ -1,8 +1,8 @@
-"""Agregando fecha_asignacion a Rollo
+"""Admin V2 completo
 
-Revision ID: 6d9a7bab72a7
+Revision ID: 74ad5e44ee7c
 Revises: 
-Create Date: 2025-12-06 21:03:26.025163
+Create Date: 2025-12-08 00:17:10.143972
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6d9a7bab72a7'
+revision = '74ad5e44ee7c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('linea', sa.String(length=50), nullable=False),
     sa.Column('variedad', sa.String(length=10), nullable=False),
     sa.Column('garantia_anios', sa.Integer(), nullable=False),
+    sa.Column('precio', sa.Float(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -61,6 +62,7 @@ def upgrade():
     sa.Column('estado', sa.String(length=20), nullable=True),
     sa.Column('fecha_creacion', sa.DateTime(), nullable=True),
     sa.Column('fecha_asignacion', sa.DateTime(), nullable=True),
+    sa.Column('lote', sa.String(length=50), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('producto_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['producto_id'], ['productos.id'], ),

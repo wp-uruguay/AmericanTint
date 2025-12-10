@@ -44,4 +44,10 @@ def create_app(config_class=Config):
     from app.views.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    # ... (tus otros blueprints) ...
+
+    # 6. CENTRO DE SOPORTE (Nuevo)
+    from app.views.support import support_bp
+    app.register_blueprint(support_bp, url_prefix='/support')
+
     return app
