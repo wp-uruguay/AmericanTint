@@ -7,35 +7,142 @@
   <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='assets/img/apple-icon.png') }}">
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/img/favicon.png') }}">
   
-  <title>
-    {% block title %}American Tint ERP{% endblock %}
-  </title>
+  <title>{% block title %}American Tint ERP{% endblock %}</title>
   
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
   <link href="{{ url_for('static', filename='assets/css/nucleo-icons.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+  
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   
   <link id="pagestyle" href="{{ url_for('static', filename='assets/css/material-dashboard.css') }}?v=3.1.0" rel="stylesheet" />
+
+  <style>
+    /* --- CAMBIO DE TIPOGRAFÍA GLOBAL --- */
+    body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, p, span, a, div, strong, label, input {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    /* --- SIDEBAR: COLOR ACTIVO ROJO (#E00B14) --- */
+    .sidenav .nav-link.active {
+        background-color: #E00B14 !important;
+        background-image: linear-gradient(195deg, #E00B14 0%, #B30000 100%) !important;
+        box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(224, 11, 20, 0.4) !important;
+        color: white !important;
+    }
+    .sidenav .nav-link.active i {
+        color: white !important;
+    }
+
+    /* --- CORRECCIÓN SIDEBAR (Z-INDEX) --- */
+    .sidenav {
+        z-index: 1100 !important; 
+    }
+
+    /* --- HEADER MÓVIL (VIDRIO) --- */
+    .navbar-mobile-glass {
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        transition: all 0.3s ease;
+    }
+
+    /* --- ESTILOS DE NOTIFICACIÓN PERSONALIZADOS --- */
+    .alert {
+        border-width: 2px;
+        border-style: solid;
+        color: #344767 !important; /* Texto oscuro */
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        padding: 1rem 1.5rem;
+    }
+    
+    /* Close button fix for dark text alerts */
+    .alert .btn-close {
+        color: #344767 !important; 
+        opacity: 0.8;
+    }
+
+    /* ÉXITO (Verde) */
+    .alert-custom-success {
+        background-color: #e8f5e9 !important; /* Verde muy clarito */
+        border-color: #4caf50 !important;     /* Borde verde */
+    }
+    .alert-custom-success .alert-icon i {
+        color: #4caf50 !important;
+    }
+    .alert-custom-success strong {
+        color: #2e7d32 !important; /* Verde oscuro para título */
+        font-weight: 800 !important;
+    }
+
+    /* ERROR (Rojo) */
+    .alert-custom-danger {
+        background-color: #ffebee !important; /* Rojo muy clarito */
+        border-color: #f44336 !important;     /* Borde rojo */
+    }
+    .alert-custom-danger .alert-icon i {
+        color: #f44336 !important;
+    }
+    .alert-custom-danger strong {
+        color: #c62828 !important;
+        font-weight: 800 !important;
+    }
+
+    /* INFO (Azul) */
+    .alert-custom-info {
+        background-color: #e3f2fd !important;
+        border-color: #2196f3 !important;
+    }
+    .alert-custom-info strong {
+        color: #1565c0 !important;
+        font-weight: 800 !important;
+    }
+
+    @media (max-width: 1199px) {
+        .main-content {
+            padding-top: 10px;
+        }
+        .navbar-mobile-glass .navbar-brand-img {
+            max-height: 20px !important; 
+            width: auto;
+        }
+    }
+
+    .navbar-vertical .navbar-brand-img {
+        max-height: 40px !important;
+        width: auto;
+    }
+  </style>
 </head>
 
 <body class="g-sidenav-show bg-gray-200">
   
   <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" id="sidenav-main">
-    <div class="sidenav-header">
+    
+    <div class="sidenav-header text-center">
       <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="/">
-        <span class="ms-1 font-weight-bold text-white">American Tint ERP</span>
+        <img src="{{ url_for('static', filename='assets/img/logo-ct.png') }}" class="navbar-brand-img h-100" alt="main_logo">
       </a>
     </div>
+    
     <hr class="horizontal light mt-0 mb-2">
+    
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         
         {% if current_user.role in ['admin', 'superadmin'] %}
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-primary' if request.path == '/admin/' else '' }}" href="/admin">
+          <a class="nav-link text-white {{ 'active' if request.path == '/admin/' else '' }}" href="/admin">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">dashboard</i>
             </div>
@@ -43,7 +150,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/vender' in request.path or '/assign_stock' in request.path else '' }}" href="{{ url_for('admin.vender') }}">
+          <a class="nav-link text-white {{ 'active' if '/vender' in request.path or '/assign_stock' in request.path else '' }}" href="{{ url_for('admin.vender') }}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">shopping_cart</i>
             </div>
@@ -51,7 +158,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/stock' in request.path else '' }}" href="{{ url_for('admin.gestionar_stock') }}">
+          <a class="nav-link text-white {{ 'active' if '/stock' in request.path else '' }}" href="{{ url_for('admin.gestionar_stock') }}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">inventory_2</i>
             </div>
@@ -59,7 +166,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-primary' if '/instaladores' in request.path else '' }}" href="{{ url_for('admin.gestionar_instaladores') }}">
+          <a class="nav-link text-white {{ 'active' if '/instaladores' in request.path else '' }}" href="{{ url_for('admin.gestionar_instaladores') }}">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">people</i>
             </div>
@@ -67,18 +174,18 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-warning' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">headset_mic</i>
-            </div>
-            <span class="nav-link-text ms-1">Centro de Soporte</span>
-          </a>
+            <a class="nav-link text-white {{ 'active' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-icons opacity-10">headset_mic</i>
+              </div>
+              <span class="nav-link-text ms-1">Centro de Soporte</span>
+            </a>
         </li>
         {% endif %}
 
         {% if current_user.role == 'instalador' %}
         <li class="nav-item">
-          <a class="nav-link text-white active bg-gradient-info" href="/instalador">
+          <a class="nav-link text-white {{ 'active' if '/instalador' in request.path else '' }}" href="/instalador">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">build</i>
             </div>
@@ -86,12 +193,12 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white {{ 'active bg-gradient-warning' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
-            <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">headset_mic</i>
-            </div>
-            <span class="nav-link-text ms-1">Centro de Soporte</span>
-          </a>
+            <a class="nav-link text-white {{ 'active' if '/support' in request.path else '' }}" href="{{ url_for('support.index') }}">
+              <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-icons opacity-10">headset_mic</i>
+              </div>
+              <span class="nav-link-text ms-1">Ayuda / Soporte</span>
+            </a>
         </li>
         {% endif %}
 
@@ -110,20 +217,42 @@
     </div>
   </aside>
 
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+    
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 border-radius-xl shadow-none navbar-mobile-glass" id="navbarBlur" data-scroll="true">
       <div class="container-fluid py-1 px-3">
-        <nav aria-label="breadcrumb">
-          <h6 class="font-weight-bolder mb-0">{% block page_title %}Dashboard{% endblock %}</h6>
+        
+        <div class="d-flex align-items-center d-xl-none">
+            <a href="/">
+                <img src="{{ url_for('static', filename='assets/img/logo-dark.png') }}" class="navbar-brand-img" alt="logo">
+            </a>
+        </div>
+
+        <nav aria-label="breadcrumb" class="d-none d-xl-block">
+          <h6 class="font-weight-bolder mb-0 text-dark">{% block page_title %}Dashboard{% endblock %}</h6>
         </nav>
+
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-          <ul class="navbar-nav ms-md-auto justify-content-end">
-            <li class="nav-item d-flex align-items-center">
+          <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
+          
+          <ul class="navbar-nav justify-content-end">
+            <li class="nav-item d-flex align-items-center d-none d-sm-flex">
               <span class="nav-link text-body font-weight-bold px-0">
                 <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">{{ current_user.username }}</span>
+                <span>{{ current_user.username }}</span>
               </span>
             </li>
+
+            <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+              <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                <div class="sidenav-toggler-inner">
+                  <i class="sidenav-toggler-line bg-dark"></i>
+                  <i class="sidenav-toggler-line bg-dark"></i>
+                  <i class="sidenav-toggler-line bg-dark"></i>
+                </div>
+              </a>
+            </li>
+
           </ul>
         </div>
       </div>
@@ -133,14 +262,31 @@
       
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible text-white fade show" role="alert">
-                <span class="alert-text"><strong>Mensaje:</strong> {{ message }}</span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+          <div class="row mb-4">
+            <div class="col-12">
+              {% for category, message in messages %}
+                {% set color_class = 'success' if category == 'success' else 'danger' if category == 'danger' else 'info' %}
+                
+                <div class="alert alert-custom-{{ color_class }} alert-dismissible fade show d-flex align-items-center" role="alert">
+                    <span class="alert-icon me-2 d-flex align-items-center">
+                      {% if category == 'success' %}
+                        <i class="material-icons text-lg">check_circle</i>
+                      {% elif category == 'danger' %}
+                        <i class="material-icons text-lg">error</i>
+                      {% else %}
+                        <i class="material-icons text-lg">info</i>
+                      {% endif %}
+                    </span>
+                    <span class="alert-text">
+                        <strong class="text-uppercase me-2">{{ 'ÉXITO' if category == 'success' else 'ERROR' if category == 'danger' else 'INFO' }}:</strong> {{ message }}
+                    </span>
+                    <button type="button" class="btn-close text-dark d-flex align-items-center justify-content-center" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true" style="font-size: 1.5rem; line-height: 0;">&times;</span>
+                    </button>
+                </div>
+              {% endfor %}
             </div>
-          {% endfor %}
+          </div>
         {% endif %}
       {% endwith %}
 

@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil: {{ inst.username }}{% endblock %}
+{% block page_title %}Centro de Comando Cliente{% endblock %}
+
+{% block content %}
+
+<div class="page-header min-height-250 border-radius-xl mt-4" 
+     style="background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1950&q=80'); background-position: center;">
+    <span class="mask bg-gradient-dark opacity-8"></span>
+</div>
+
+<div class="card card-body mx-3 mx-md-4 mt-n6 shadow-lg">
+    <div class="row gx-4 mb-2">
+        <div class="col-auto">
+            <div class="avatar avatar-xl position-relative">
+                {% if inst.logo_url %}
+                    <img src="{{ inst.logo_url }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm bg-white p-1">
+                {% else %}
+                    <div class="avatar avatar-xl bg-gradient-dark rounded-circle text-white h-100 w-100 d-flex align-items-center justify-content-center text-2xl shadow">
+                        {{ inst.username[0] }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-auto my-auto">
+            <div class="h-100">
+                <h4 class="mb-1 font-weight-bolder">{{ inst.username }}</h4>
+                <p class="mb-0 font-weight-normal text-sm text-muted">
+                    {{ inst.nombre_responsable or 'Sin responsable' }} <span class="mx-2">|</span> 
+                    <i class="flag-icon">{{ inst.pais }}</i> {{ inst.pais }}
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 col-md-8 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
+            <div class="nav-wrapper position-relative end-0">
+                <ul class="nav nav-pills nav-fill p-1 bg-gray-200 border-radius-lg" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link mb-0 px-0 py-1 {{ 'active bg-white shadow' if active_tab == 'perfil' else '' }}" data-bs-toggle="tab" href="#tab-perfil" role="tab">
+                            <i class="material-icons text-sm position-relative">person</i>
+                            <span class="ms-1">Perfil</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mb-0 px-0 py-1 {{ 'active bg-white shadow' if active_tab == 'stock' else '' }}" data-bs-toggle="tab" href="#tab-stock" role="tab">
+                            <i class="material-icons text-sm position-relative">local_shipping</i>
+                            <span class="ms-1">Env. Stock</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mb-0 px-0 py-1 {{ 'active bg-white shadow' if active_tab == 'email' else '' }}" data-bs-toggle="tab" href="#tab-email" role="tab">
+                            <i class="material-icons text-sm position-relative">email</i>
+                            <span class="ms-1">Email</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mb-0 px-0 py-1 {{ 'active bg-white shadow' if active_tab == 'whatsapp' else '' }}" data-bs-toggle="tab" href="#tab-whatsapp" role="tab">
+                            <i class="material-icons text-sm position-relative">chat</i>
+                            <span class="ms-1">WhatsApp</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content mt-4">
+
+    <div class="tab-pane fade {{ 'show active' if active_tab == 'perfil' else '' }}" id="tab-perfil" role="tabpanel">
+        
+        <div class="row">
+            <div class="col-xl-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header p-3 pt-2">
+                        <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                            <i class="material-icons opacity-10">shopping_bag</i>
+                        </div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Total Comprado</p>
+                            <h4 class="mb-0">{{ total_rollos }} Rollos</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header p-3 pt-2">
+                        <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                            <i class="material-icons opacity-10">inventory</i>
+                        </div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Stock Actual</p>
+                            <h4 class="mb-0">{{ activos }} Rollos</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-sm-6 mb-4">
+                <div class="card">
+                    <div class="card-header p-3 pt-2">
+                        <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                            <i class="material-icons opacity-10">verified</i>
+                        </div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Garantías</p>
+                            <h4 class="mb-0">{{ garantias }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-xl-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header pb-0 p-3">
+                        <h6 class="mb-0">Información del Negocio</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <ul class="list-group">
+                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ inst.email }}</li>
+                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Teléfono:</strong> &nbsp; {{ inst.telefono_negocio or '-' }}</li>
+                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Dirección:</strong> &nbsp; {{ inst.direccion_negocio or '-' }}</li>
+                            <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">País:</strong> &nbsp; {{ inst.pais }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-xl-8">
+                <div class="card h-100">
+                    <div class="card-header pb-0 p-3">
+                        <h6 class="mb-0">📜 Últimos Envíos</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="table-responsive">
+                            <table class="table align-items-center mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Producto</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Código</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rollo in historial %}
+                                    <tr>
+                                        <td><p class="text-xs font-weight-bold mb-0">{{ rollo.fecha_asignacion.strftime('%d/%m/%Y') }}</p></td>
+                                        <td><p class="text-xs font-weight-bold mb-0">{{ rollo.producto_info.nombre }}</p></td>
+                                        <td class="align-middle text-center"><span class="text-secondary text-xs font-weight-bold">{{ rollo.codigo_padre }}</span></td>
+                                        <td class="align-middle text-center">
+                                            {% if rollo.estado == 'ASIGNADO' %}<span class="badge badge-sm bg-gradient-success">Stock</span>{% else %}<span class="badge badge-sm bg-gradient-secondary">Agotado</span>{% endif %}
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr><td colspan="4" class="text-center p-3 text-muted">Sin historial.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade {{ 'show active' if active_tab == 'stock' else '' }}" id="tab-stock" role="tabpanel">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header p-3 bg-gradient-warning">
+                        <h6 class="mb-0 text-white">📦 Transferir Mercadería</h6>
+                        <p class="text-sm text-white mb-0 opacity-8">Selecciona los rollos de TU depósito para enviar a {{ inst.username }}</p>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="row mb-3 p-3 bg-gray-100 border-radius-lg mx-1">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label text-xs font-weight-bold text-uppercase text-secondary">Filtrar por Línea</label>
+                                <select id="filterLine" class="form-select border p-2 bg-white" onchange="filterTable()">
+                                    <option value="all">Todas las Líneas</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-xs font-weight-bold text-uppercase text-secondary">Filtrar por Variedad</label>
+                                <select id="filterVar" class="form-select border p-2 bg-white" onchange="filterTable()">
+                                    <option value="all">Todas las Variedades</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <form method="POST">
+                            <input type="hidden" name="accion" value="transferir">
+                            
+                            <div class="table-responsive p-0" style="max_height: 400px; overflow-y: auto;">
+                                <table class="table table-hover align-items-center mb-0" id="stockTable">
+                                    <thead class="bg-gray-100 sticky-top">
+                                        <tr>
+                                            <th class="text-center" width="50">✔</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Código Rollo</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Producto</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Lote</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for rollo in stock_disponible %}
+                                        <tr class="stock-row" 
+                                            data-linea="{{ rollo.producto_info.linea }}" 
+                                            data-variedad="{{ rollo.producto_info.variedad }}">
+                                            
+                                            <td class="text-center">
+                                                <div class="form-check text-center d-flex justify-content-center">
+                                                    <input class="form-check-input" type="checkbox" name="rollos_seleccionados" value="{{ rollo.id }}">
+                                                </div>
+                                            </td>
+                                            <td><h6 class="mb-0 text-sm">{{ rollo.codigo_padre }}</h6></td>
+                                            <td><p class="text-xs font-weight-bold mb-0">{{ rollo.producto_info.nombre }}</p></td>
+                                            <td><span class="text-secondary text-xs">{{ rollo.lote or '-' }}</span></td>
+                                        </tr>
+                                        {% else %}
+                                        <tr><td colspan="4" class="text-center p-4 text-danger">No tienes stock disponible en tu depósito.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <p id="noResults" class="text-center text-muted mt-3 d-none">No hay rollos que coincidan con el filtro.</p>
+                            </div>
+                            
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn bg-gradient-warning mb-0">Confirmar Transferencia 🚀</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade {{ 'show active' if active_tab == 'email' else '' }}" id="tab-email" role="tabpanel">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header p-3 bg-gradient-info">
+                        <h6 class="mb-0 text-white">📧 Enviar Correo Oficial</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <input type="hidden" name="accion" value="email">
+                            <div class="input-group input-group-static mb-4">
+                                <label>Destinatario</label>
+                                <input type="text" class="form-control" value="{{ inst.email }}" disabled>
+                            </div>
+                            <div class="input-group input-group-outline mb-4">
+                                <label class="form-label">Asunto</label>
+                                <input type="text" name="asunto" class="form-control" required>
+                            </div>
+                            <div class="input-group input-group-outline mb-4">
+                                <textarea name="mensaje" class="form-control" rows="6" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn bg-gradient-info">Enviar Correo</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade {{ 'show active' if active_tab == 'whatsapp' else '' }}" id="tab-whatsapp" role="tabpanel">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header p-3 bg-gradient-success">
+                        <h6 class="mb-0 text-white">💬 Contactar por WhatsApp</h6>
+                        <p class="text-sm text-white mb-0 opacity-8">Detectado País: <strong>{{ inst.pais }}</strong> (Prefijo: +{{ prefijo_pais }})</p>
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" id="waPrefix" value="{{ prefijo_pais }}">
+                        <input type="hidden" id="waPhone" value="{{ inst.telefono_negocio }}">
+
+                        {% if not inst.telefono_negocio %}
+                            <div class="alert alert-warning text-white">⚠️ Este instalador no tiene número de teléfono registrado.</div>
+                        {% else %}
+                            <div class="input-group input-group-outline mb-4">
+                                <textarea id="waMessage" class="form-control" rows="5" placeholder="Hola, te escribo desde American Tint..."></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="button" onclick="sendWhatsApp()" class="btn bg-gradient-success">
+                                    <i class="fa fa-whatsapp me-2"></i> Abrir WhatsApp
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 1. WhatsApp
+    function sendWhatsApp() {
+        var prefix = document.getElementById('waPrefix').value;
+        var phone = document.getElementById('waPhone').value;
+        var message = document.getElementById('waMessage').value;
+        var cleanPhone = phone.replace(/\D/g, ''); 
+        if (!cleanPhone.startsWith(prefix)) {
+            cleanPhone = prefix + cleanPhone;
+        }
+        var url = "https://wa.me/" + cleanPhone + "?text=" + encodeURIComponent(message);
+        window.open(url, '_blank');
+    }
+
+    // 2. Filtros Dinámicos de Stock
+    document.addEventListener("DOMContentLoaded", function() {
+        populateFilters();
+    });
+
+    function populateFilters() {
+        const rows = document.querySelectorAll('.stock-row');
+        const lines = new Set();
+        const vars = new Set();
+
+        rows.forEach(row => {
+            lines.add(row.dataset.linea);
+            vars.add(row.dataset.variedad);
+        });
+
+        const lineSelect = document.getElementById('filterLine');
+        const varSelect = document.getElementById('filterVar');
+
+        // Llenar Select Líneas
+        lines.forEach(l => {
+            const opt = document.createElement('option');
+            opt.value = l;
+            opt.textContent = l;
+            lineSelect.appendChild(opt);
+        });
+
+        // Llenar Select Variedades
+        vars.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v;
+            opt.textContent = v;
+            varSelect.appendChild(opt);
+        });
+    }
+
+    function filterTable() {
+        const selectedLine = document.getElementById('filterLine').value;
+        const selectedVar = document.getElementById('filterVar').value;
+        const rows = document.querySelectorAll('.stock-row');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const line = row.dataset.linea;
+            const variety = row.dataset.variedad;
+            
+            const matchLine = (selectedLine === 'all' || line === selectedLine);
+            const matchVar = (selectedVar === 'all' || variety === selectedVar);
+
+            if (matchLine && matchVar) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Mostrar mensaje si no hay resultados
+        const noMsg = document.getElementById('noResults');
+        if (visibleCount === 0) {
+            noMsg.classList.remove('d-none');
+        } else {
+            noMsg.classList.add('d-none');
+        }
+    }
+</script>
+
+{% endblock %}

@@ -7,22 +7,23 @@ mail = Mail()
 def send_async_email(app, msg, link_debug):
     with app.app_context():
         try:
-            # Intentamos enviar el correo real
             mail.send(msg)
             print(f"✅ EMAIL ENVIADO EXITOSAMENTE a: {msg.recipients}")
         except Exception as e:
-            print(f"⚠️ EL EMAIL FALLÓ (Probablemente configuración .env): {e}")
-            print(f"🔗 PERO AQUÍ TIENES EL LINK PARA PROBAR: {link_debug}")
+            print(f"⚠️ EL EMAIL FALLÓ: {e}")
+            if link_debug:
+                print(f"🔗 LINK DE ACTIVACIÓN: {link_debug}")
 
 class EmailService:
+    
     @staticmethod
     def enviar_activacion(destinatario, codigo, link_activacion):
         app = current_app._get_current_object()
         
-        # IMPRIMIR EN TERMINAL SIEMPRE (Para que puedas probar sin Gmail)
+        # LOG PARA DEBUG
         print("\n" + "="*50)
-        print(f"📧 SIMULACIÓN DE CORREO PARA: {destinatario}")
-        print(f"🔗 LINK DE ACTIVACIÓN: {link_activacion}")
+        print(f"📧 EMAIL ACTIVACIÓN PARA: {destinatario}")
+        print(f"🔗 LINK: {link_activacion}")
         print("="*50 + "\n")
 
         msg = Message(
@@ -45,3 +46,26 @@ class EmailService:
         """
         
         Thread(target=send_async_email, args=(app, msg, link_activacion)).start()
+
+    @staticmethod
+    def enviar_mensaje_personalizado(destinatario, asunto, cuerpo):
+        app = current_app._get_current_object()
+        
+        msg = Message(
+            subject=f"📢 {asunto} - American Tint",
+            recipients=[destinatario]
+        )
+        
+        # Convertimos saltos de línea a <br>
+        cuerpo_html = cuerpo.replace('\n', '<br>')
+        
+        msg.html = f"""
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee;">
+            <h3 style="color: #333;">Hola,</h3>
+            <p style="font-size: 16px; color: #555;">{cuerpo_html}</p>
+            <hr>
+            <small style="color: #999;">Enviado desde el Centro de Soporte American Tint</small>
+        </div>
+        """
+        
+        Thread(target=send_async_email, args=(app, msg, None)).start()

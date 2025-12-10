@@ -43,9 +43,8 @@
                         <label class="form-label">Dirección</label>
                         <input type="text" name="direccion" class="form-control">
                     </div>
-                    
                     <div class="input-group input-group-outline mb-3">
-                        <label class="form-label">URL del Logo (Opcional)</label>
+                        <label class="form-label">URL del Logo</label>
                         <input type="text" name="logo_url" class="form-control">
                     </div>
 
@@ -68,12 +67,23 @@
 
     <div class="col-md-8">
         <div class="card h-100">
-            <div class="card-header pb-0">
+            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                 <h6>👥 Cartera de Clientes</h6>
+                
+                <form action="{{ url_for('admin.gestionar_instaladores') }}" method="GET" class="d-flex align-items-center">
+                    <div class="input-group input-group-outline input-group-sm is-filled">
+                        <label class="form-label">Buscar Taller...</label>
+                        <input type="text" name="q" class="form-control" value="{{ request.args.get('q', '') }}">
+                    </div>
+                    <button type="submit" class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm">
+                        <i class="material-icons text-sm">search</i>
+                    </button>
+                </form>
             </div>
+            
             <div class="card-body px-0 pt-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
+                    <table class="table align-items-center mb-0 table-hover">
                         <thead>
                             <tr>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Taller / Usuario</th>
@@ -84,7 +94,7 @@
                         </thead>
                         <tbody>
                             {% for inst in instaladores %}
-                            <tr>
+                            <tr style="cursor: pointer;" onclick="window.location.href='{{ url_for('admin.ver_instalador', user_id=inst.id) }}';">
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         {% if inst.logo_url %}
@@ -94,9 +104,8 @@
                                                 {{ inst.username[0] }}
                                             </div>
                                         {% endif %}
-                                        
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm">{{ inst.username }}</h6>
+                                            <h6 class="mb-0 text-sm text-primary">{{ inst.username }}</h6>
                                             <p class="text-xs text-secondary mb-0">{{ inst.nombre_responsable or 'Sin responsable' }}</p>
                                         </div>
                                     </div>
@@ -108,17 +117,17 @@
                                 <td class="align-middle text-center text-sm">
                                     <span class="badge badge-sm bg-gradient-light text-dark">{{ inst.pais }}</span>
                                 </td>
-                                <td class="align-middle">
-                                    <a href="{{ url_for('admin.assign_stock', user_id=inst.id) }}" class="btn btn-link text-success text-gradient px-3 mb-0">
-                                        <i class="material-icons text-sm me-2">local_shipping</i>Enviar
+                                <td class="align-middle" onclick="event.stopPropagation();">
+                                    <a href="{{ url_for('admin.assign_stock', user_id=inst.id) }}" class="btn btn-link text-success text-gradient px-1 mb-0" title="Enviar Stock">
+                                        <i class="material-icons text-sm">local_shipping</i>
                                     </a>
-                                    <a href="{{ url_for('admin.delete_user', user_id=inst.id) }}" class="btn btn-link text-danger text-gradient px-3 mb-0" onclick="return confirm('¿Eliminar taller?')">
-                                        <i class="material-icons text-sm me-2">delete</i>Borrar
+                                    <a href="{{ url_for('admin.delete_user', user_id=inst.id) }}" class="btn btn-link text-danger text-gradient px-1 mb-0" onclick="return confirm('¿Eliminar taller?')">
+                                        <i class="material-icons text-sm">delete</i>
                                     </a>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr><td colspan="4" class="text-center py-4">No hay instaladores registrados.</td></tr>
+                            <tr><td colspan="4" class="text-center py-4 text-muted">No se encontraron resultados.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
